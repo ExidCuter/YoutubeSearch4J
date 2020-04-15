@@ -63,7 +63,12 @@ public class YoutubeSearch {
 
             videoBuilder.description(htmlVideo.select(".yt-lockup-description").text());
 
-            videos.add(videoBuilder.build());
+            Video video = videoBuilder.build();
+
+            if (video.getLink() != null) {
+                videos.add(videoBuilder.build());
+            }
+
         });
 
         return videos;

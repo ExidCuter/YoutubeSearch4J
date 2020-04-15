@@ -48,6 +48,8 @@ public class YoutubeSearch {
                 Channel channel = Channel.builder().link(YoutubeSearch.ytUrl + channelData.attr("href")).name(channelData.text()).verified(htmlVideo.select(".yt-channel-title-icon-verified").size() == 1).build();
 
                 videoBuilder.link(YoutubeSearch.ytUrl + videoData.attr("href")).title(videoData.attr("title")).channel(channel);
+
+                videoBuilder.playlist(videoData.attr("href").contains("list="));
             }
 
             Elements videoInfo = htmlVideo.select(".yt-lockup-meta-info").select("li");
@@ -60,10 +62,6 @@ public class YoutubeSearch {
             videoBuilder.duration(htmlVideo.select(".accessible-description").text());
 
             videoBuilder.description(htmlVideo.select(".yt-lockup-description").text());
-
-            Video video = videoBuilder.build();
-
-            videoBuilder.playlist(video.getLink().contains("list="));
 
             videos.add(videoBuilder.build());
         });

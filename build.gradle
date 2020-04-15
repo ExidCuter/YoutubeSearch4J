@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'application'
+    id 'maven'
 }
 
 group 'org.td-fl'

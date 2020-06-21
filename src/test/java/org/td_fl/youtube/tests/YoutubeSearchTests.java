@@ -43,4 +43,15 @@ public class YoutubeSearchTests {
                         tuple("https://www.youtube.com/watch?v=lYKENqLKK-Y", "Neda Ukraden - Na Balkanu - (Official Video 2012) HD", "Neda Ukraden")
                 );
     }
+
+    @Test
+    public void test_search4() throws IOException {
+        List<Video> videos = YoutubeSearch.search("kes picke");
+
+        assertThat(videos).isNotNull()
+                .extracting("link", "title", "channel.name")
+                .contains(
+                        tuple("https://www.youtube.com/watch?v=SJfUYTfdoR4", "Klemen Klemen - Keš pičke (official video HD)", "Klemen Klemen")
+                );
+    }
 }

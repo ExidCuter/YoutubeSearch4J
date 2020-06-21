@@ -41,9 +41,15 @@ public class YoutubeSearch {
                 Element videoData = links.get(0);
                 Element channelData = links.get(1);
 
-                Channel channel = Channel.builder().link(YoutubeSearch.ytUrl + channelData.attr("href")).name(channelData.text()).verified(htmlVideo.select(".yt-channel-title-icon-verified").size() == 1).build();
+                Channel channel = Channel.builder()
+                        .link(YoutubeSearch.ytUrl + channelData.attr("href"))
+                        .name(channelData.text())
+                        .verified(htmlVideo.select(".yt-channel-title-icon-verified").size() == 1)
+                        .build();
 
-                videoBuilder.link(YoutubeSearch.ytUrl + videoData.attr("href")).title(videoData.attr("title")).channel(channel);
+                videoBuilder.link(YoutubeSearch.ytUrl + videoData.attr("href"))
+                        .title(videoData.attr("title"))
+                        .channel(channel);
 
                 videoBuilder.playlist(videoData.attr("href").contains("list="));
             }
@@ -51,18 +57,19 @@ public class YoutubeSearch {
             Elements videoInfo = htmlVideo.select(".yt-lockup-meta-info").select("li");
 
             if (videoInfo.size() > 1) {
-                videoBuilder.uploaded(videoInfo.get(0).text());
-                videoBuilder.views(videoInfo.get(1).text());
+                videoBuilder
+                        .uploaded(videoInfo.get(0).text())
+                        .views(videoInfo.get(1).text());
             }
 
-            videoBuilder.duration(htmlVideo.select(".accessible-description").text());
-
-            videoBuilder.description(htmlVideo.select(".yt-lockup-description").text());
+            videoBuilder
+                    .duration(htmlVideo.select(".accessible-description").text())
+                    .description(htmlVideo.select(".yt-lockup-description").text());
 
             Video video = videoBuilder.build();
 
             if (video.getLink() != null) {
-                videos.add(videoBuilder.build());
+                videos.add(video);
             }
 
         });

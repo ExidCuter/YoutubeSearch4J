@@ -29,7 +29,18 @@ public class YoutubeSearchTests {
         assertThat(videos).isNotNull()
                 .extracting("link", "title", "channel.name")
                 .contains(
-                        tuple("https://www.youtube.com/watch?v=d8ekz_CSBVg", "Three Days Grace - I Hate Everything About You", "Three Days Grace")
+                        tuple("https://www.youtube.com/watch?v=d8ekz_CSBVg", "Three Days Grace - I Hate Everything About You (Official Video)", "Three Days Grace")
+                );
+    }
+
+    @Test
+    public void test_search3() throws IOException {
+        List<Video> videos = YoutubeSearch.search("na balkanu");
+
+        assertThat(videos).isNotNull()
+                .extracting("link", "title", "channel.name")
+                .contains(
+                        tuple("https://www.youtube.com/watch?v=lYKENqLKK-Y", "Neda Ukraden - Na Balkanu - (Official Video 2012) HD", "Neda Ukraden")
                 );
     }
 }

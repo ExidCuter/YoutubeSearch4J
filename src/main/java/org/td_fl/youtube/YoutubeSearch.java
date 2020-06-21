@@ -19,23 +19,19 @@ public class YoutubeSearch {
     private static final OkHttpClient client = new OkHttpClient();
     private static String ytUrl = "https://www.youtube.com";
     private static final String resultsQuery = YoutubeSearch.ytUrl + "/results?search_query=";
+    private static int MAX_ATTEMPTS = 3;
 
     @NotNull
     public static List<Video> search(@NotNull String query) throws IOException {
-        String res = "";
+        int attempt = 0;
         List<Video> videos = new ArrayList<>();
 
-        Request request = new Request.Builder()
-                .url(resultsQuery + query)
-                .build();
+        Elements htmlVideos = parseHTML(makeRequest(query));
 
-        try (Response response = client.newCall(request).execute()) {
-            res = response.body().string();
+        while(htmlVideos.size() == 0 && attempt < MAX_ATTEMPTS) {
+            htmlVideos = parseHTML(makeRequest(query));
+            attempt++;
         }
-
-        Document doc = Jsoup.parse(res);
-
-        Elements htmlVideos = doc.select(".yt-lockup-content");
 
         htmlVideos.forEach(htmlVideo -> {
             Video.VideoBuilder videoBuilder = Video.builder();
@@ -72,5 +68,25 @@ public class YoutubeSearch {
         });
 
         return videos;
+    }
+
+    private static String makeRequest(String query) throws IOException {
+        Request request = new Request.Builder()
+                .url(resultsQuery + query)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
+    }
+
+    private static Elements parseHTML(String html) {
+        Document doc = Jsoup.parse(html);
+
+        return doc.select(".yt-lockup-content");
+    }
+
+    public static void setMaxFailedAttempts(int maxFailedAttempts) {
+        MAX_ATTEMPTS = maxFailedAttempts;
     }
 }

@@ -1,5 +1,6 @@
 package org.td_fl.youtube.tests;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.td_fl.youtube.YoutubeSearch;
 import org.td_fl.youtube.models.Video;
@@ -12,6 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 public class YoutubeSearchTests {
+    @Before
+    public void init() {
+        YoutubeSearch.setMaxFailedAttempts(10);
+    }
+
     @Test
     public void test_search() throws IOException, InterruptedException {
         List<Video> videos = YoutubeSearch.search("pewdiepie bitch lasagna", Locale.GERMAN);

@@ -22,7 +22,7 @@ public class YoutubeSearch {
     private static String YT_URL = "https://www.youtube.com";
     private final static String YT_IMG_URL = "https://i.ytimg.com/vi/";
     private static final String YT_QUERY_URL = YoutubeSearch.YT_URL + "/results?search_query=";
-    private static int MAX_ATTEMPTS = 3;
+    private static int MAX_ATTEMPTS = 3; // Sometimes Youtube fails to serve a full page
 
     @NotNull
     public static List<Video> search(@NotNull String query, Locale locale) throws IOException, InterruptedException {

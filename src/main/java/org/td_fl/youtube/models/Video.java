@@ -4,15 +4,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.Duration;
+
 @Getter
 @Builder
 @ToString
 public class Video {
     private String link;
     private String title;
-    private String views;
+    private Integer views;
+    private String imgUri;
     private String uploaded;
-    private String duration;
+    private Duration duration;
     private String description;
     private boolean playlist;
 

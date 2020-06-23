@@ -6,14 +6,15 @@ import org.td_fl.youtube.models.Video;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 public class YoutubeSearchTests {
     @Test
-    public void test_search() throws IOException {
-        List<Video> videos = YoutubeSearch.search("pewdiepie bitch lasagna");
+    public void test_search() throws IOException, InterruptedException {
+        List<Video> videos = YoutubeSearch.search("pewdiepie bitch lasagna", Locale.GERMAN);
 
         assertThat(videos).isNotNull()
                 .extracting("link", "title", "channel.name")
@@ -23,8 +24,8 @@ public class YoutubeSearchTests {
     }
 
     @Test
-    public void test_search2() throws IOException {
-        List<Video> videos = YoutubeSearch.search("I hate everything about you");
+    public void test_search2() throws IOException, InterruptedException {
+        List<Video> videos = YoutubeSearch.search("I hate everything about you", Locale.GERMAN);
 
         assertThat(videos).isNotNull()
                 .extracting("link", "title", "channel.name")
@@ -34,8 +35,8 @@ public class YoutubeSearchTests {
     }
 
     @Test
-    public void test_search3() throws IOException {
-        List<Video> videos = YoutubeSearch.search("na balkanu");
+    public void test_search3() throws IOException, InterruptedException {
+        List<Video> videos = YoutubeSearch.search("na balkanu", Locale.GERMAN);
 
         assertThat(videos).isNotNull()
                 .extracting("link", "title", "channel.name")
@@ -45,13 +46,24 @@ public class YoutubeSearchTests {
     }
 
     @Test
-    public void test_search4() throws IOException {
-        List<Video> videos = YoutubeSearch.search("kes picke");
+    public void test_search4() throws IOException, InterruptedException {
+        List<Video> videos = YoutubeSearch.search("kes picke", Locale.GERMAN);
 
         assertThat(videos).isNotNull()
                 .extracting("link", "title", "channel.name")
                 .contains(
                         tuple("https://www.youtube.com/watch?v=SJfUYTfdoR4", "Klemen Klemen - Keš pičke (official video HD)", "Klemen Klemen")
+                );
+    }
+
+    @Test
+    public void test_search5() throws IOException, InterruptedException {
+        List<Video> videos = YoutubeSearch.search("nyan cat 10 hour", Locale.GERMAN);
+
+        assertThat(videos).isNotNull()
+                .extracting("link", "title", "channel.name")
+                .contains(
+                        tuple("https://www.youtube.com/watch?v=SkgTxQm9DWM", "Nyan Cat - 10 HOURS [ BEST SOUND QUALITY ] 4K UHD ULTRA HD", "Bufu Sounds")
                 );
     }
 }

@@ -8,27 +8,31 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.td_fl.youtube.localization.LocalizationImpl;
 import org.td_fl.youtube.models.Channel;
 import org.td_fl.youtube.models.Video;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class YoutubeSearch {
     private static final OkHttpClient client = new OkHttpClient();
-    private static String ytUrl = "https://www.youtube.com";
-    private static final String resultsQuery = YoutubeSearch.ytUrl + "/results?search_query=";
+    private static String YT_URL = "https://www.youtube.com";
+    private final static String YT_IMG_URL = "https://i.ytimg.com/vi/";
+    private static final String YT_QUERY_URL = YoutubeSearch.YT_URL + "/results?search_query=";
     private static int MAX_ATTEMPTS = 3;
 
     @NotNull
-    public static List<Video> search(@NotNull String query) throws IOException {
+    public static List<Video> search(@NotNull String query, Locale locale) throws IOException, InterruptedException {
         int attempt = 0;
         List<Video> videos = new ArrayList<>();
 
         Elements htmlVideos = parseHTML(makeRequest(query));
 
         while(htmlVideos.size() == 0 && attempt < MAX_ATTEMPTS) {
+            Thread.sleep(1000);
             htmlVideos = parseHTML(makeRequest(query));
             attempt++;
         }
@@ -42,13 +46,15 @@ public class YoutubeSearch {
                 Element channelData = links.get(1);
 
                 Channel channel = Channel.builder()
-                        .link(YoutubeSearch.ytUrl + channelData.attr("href"))
+                        .link(YoutubeSearch.YT_URL + channelData.attr("href"))
                         .name(channelData.text())
                         .verified(htmlVideo.select(".yt-channel-title-icon-verified").size() == 1)
                         .build();
 
-                videoBuilder.link(YoutubeSearch.ytUrl + videoData.attr("href"))
+                videoBuilder
+                        .link(YoutubeSearch.YT_URL + videoData.attr("href"))
                         .title(videoData.attr("title"))
+                        .imgUri(videoData.attr("href").replace("/watch?v=", YT_IMG_URL) + "/hqdefault.jpg")
                         .channel(channel);
 
                 videoBuilder.playlist(videoData.attr("href").contains("list="));
@@ -59,11 +65,11 @@ public class YoutubeSearch {
             if (videoInfo.size() > 1) {
                 videoBuilder
                         .uploaded(videoInfo.get(0).text())
-                        .views(videoInfo.get(1).text());
+                        .views(LocalizationImpl.getViewCount(videoInfo.get(1).text(), locale));
             }
 
             videoBuilder
-                    .duration(htmlVideo.select(".accessible-description").text())
+                    .duration(LocalizationImpl.getDuration(htmlVideo.select(".accessible-description").text()))
                     .description(htmlVideo.select(".yt-lockup-description").text());
 
             Video video = videoBuilder.build();
@@ -79,7 +85,7 @@ public class YoutubeSearch {
 
     private static String makeRequest(String query) throws IOException {
         Request request = new Request.Builder()
-                .url(resultsQuery + query)
+                .url(YT_QUERY_URL + query)
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
